@@ -1,6 +1,9 @@
 import { MOCK_LISTINGS, MOCK_DEMO_TRIPS, MOCK_DEMO_HOST_LISTINGS } from './mockData';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+    ? 'http://127.0.0.1:8000/api' 
+    : 'https://airbnb-clone-bmvr.onrender.com/api');
 
 export function getAuthToken(): string | null {
   if (typeof window !== 'undefined') {

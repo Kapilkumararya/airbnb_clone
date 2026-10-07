@@ -24,7 +24,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+const API = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+    ? 'http://127.0.0.1:8000/api' 
+    : 'https://airbnb-clone-bmvr.onrender.com/api');
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
