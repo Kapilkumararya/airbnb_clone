@@ -98,34 +98,72 @@ export async function fetchListing(id: string | number) {
 }
 
 export async function fetchListingBookedDates(id: string | number): Promise<{ check_in: string; check_out: string }[]> {
+  const dates: { check_in: string; check_out: string }[] = [];
   try {
     const res = await fetch(`${API_BASE_URL}/bookings/listing/${id}/booked-dates`, { cache: 'no-store' });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const serverDates = await res.json();
+      dates.push(...serverDates);
+    }
   } catch {
     /* ignore */
   }
-  // Return mock booked dates if any
+
+  // Include locally booked dates
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('airbnb_user_bookings');
+      if (stored) {
+        const localList = JSON.parse(stored);
+        const matching = localList.filter((b: any) => String(b.listing_id) === String(id) && b.status !== 'cancelled');
+        matching.forEach((m: any) => {
+          dates.push({ check_in: m.check_in, check_out: m.check_out });
+        });
+      }
+    } catch { /* ignore */ }
+  }
+
+  // Preloaded mock booked dates
   const matched = MOCK_DEMO_TRIPS.filter(t => String(t.listing_id) === String(id));
-  return matched.map(m => ({ check_in: m.check_in, check_out: m.check_out }));
+  matched.forEach(m => dates.push({ check_in: m.check_in, check_out: m.check_out }));
+  return dates;
 }
 
 export async function fetchMyBookings(token?: string) {
   const authToken = token || getAuthToken();
-  if (!authToken) return [];
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(`${API_BASE_URL}/bookings/my`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-      cache: 'no-store',
-      signal: controller.signal
-    });
-    clearTimeout(timer);
-    if (res.ok) return await res.json();
-  } catch (error) {
-    console.warn('Backend my bookings unavailable, serving fallback trips');
+  let serverBookings: any[] = [];
+  if (authToken) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3000);
+      const res = await fetch(`${API_BASE_URL}/bookings/my`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (res.ok) serverBookings = await res.json();
+    } catch (error) {
+      console.warn('Backend my bookings unavailable, serving fallback trips');
+    }
   }
-  return MOCK_DEMO_TRIPS;
+
+  // Retrieve locally saved bookings
+  let localBookings: any[] = [];
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('airbnb_user_bookings');
+      if (stored) localBookings = JSON.parse(stored);
+    } catch { /* ignore */ }
+  }
+
+  if (serverBookings.length > 0) {
+    const existingIds = new Set(serverBookings.map(b => b.id));
+    return [...localBookings.filter(b => !existingIds.has(b.id)), ...serverBookings];
+  }
+
+  const existingIds = new Set(localBookings.map(b => b.id));
+  return [...localBookings, ...MOCK_DEMO_TRIPS.filter(t => !existingIds.has(t.id))];
 }
 
 export async function fetchHostBookings(token?: string) {
@@ -168,6 +206,7 @@ export async function createBooking(data: {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
+  let created: any = null;
   try {
     const res = await fetch(`${API_BASE_URL}/bookings/`, {
       method: 'POST',
@@ -175,22 +214,61 @@ export async function createBooking(data: {
       body: JSON.stringify(data)
     });
     const resData = await res.json();
-    if (res.ok) return resData;
-    throw new Error(resData.detail || 'Reservation failed.');
+    if (res.ok) {
+      created = resData;
+    } else {
+      throw new Error(resData.detail || 'Reservation failed.');
+    }
   } catch (err: any) {
-    // If backend is offline, simulate successful mock checkout
-    console.warn('Backend booking failed, simulating checkout:', err);
-    return {
+    if (err.message && !err.message.includes('fetch') && !err.message.includes('failed to fetch') && !err.message.includes('Load failed')) {
+      throw err;
+    }
+    // If backend is offline or sleeping, create resilient local booking
+    console.warn('Backend booking offline, creating local booking:', err);
+    const nights = Math.max(1, Math.round((new Date(data.check_out).getTime() - new Date(data.check_in).getTime()) / 86400000));
+    const matchingListing = MOCK_LISTINGS.find(l => Number(l.id) === Number(data.listing_id)) || MOCK_LISTINGS[0];
+    const nightly = matchingListing.price_per_night || 12000;
+    created = {
       id: Math.floor(Math.random() * 10000) + 100,
-      ...data,
-      total_price: 35000,
-      status: 'confirmed'
+      listing_id: Number(data.listing_id),
+      check_in: data.check_in,
+      check_out: data.check_out,
+      guests: data.guests,
+      total_price: nights * nightly + (data.cleaning_fee || 1500) + (data.service_fee || 1200),
+      status: 'confirmed',
+      listing: matchingListing
     };
   }
+
+  // Persist into localStorage so user's new booking is immediately visible in /trips and calendar
+  if (typeof window !== 'undefined' && created) {
+    try {
+      const existingStr = localStorage.getItem('airbnb_user_bookings');
+      const existing = existingStr ? JSON.parse(existingStr) : [];
+      if (!created.listing) {
+        created.listing = MOCK_LISTINGS.find(l => Number(l.id) === Number(data.listing_id)) || MOCK_LISTINGS[0];
+      }
+      localStorage.setItem('airbnb_user_bookings', JSON.stringify([created, ...existing]));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return created;
 }
 
 export async function cancelBooking(bookingId: number, token?: string) {
   const authToken = token || getAuthToken();
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('airbnb_user_bookings');
+      if (stored) {
+        const localList = JSON.parse(stored);
+        const updated = localList.filter((b: any) => Number(b.id) !== Number(bookingId));
+        localStorage.setItem('airbnb_user_bookings', JSON.stringify(updated));
+      }
+    } catch { /* ignore */ }
+  }
   try {
     const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}`, {
       method: 'DELETE',

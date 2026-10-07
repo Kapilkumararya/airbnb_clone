@@ -417,6 +417,10 @@ export default function Header() {
                           </div>
                         )}
                         <Link href="/trips" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition">My Trips &amp; Bookings</Link>
+                        <Link href="/wishlists" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition flex items-center justify-between">
+                          <span>Wishlists</span>
+                          <span className="text-xs">❤️</span>
+                        </Link>
                         <Link href="/host" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm font-semibold text-neutral-800 hover:bg-neutral-50 transition">Host Dashboard</Link>
                         <Link href="/host/create" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm font-semibold text-[#FF385C] hover:bg-neutral-50 transition">+ Create listing</Link>
                         <div className="my-1.5 border-t border-neutral-100" />
@@ -427,6 +431,7 @@ export default function Header() {
                     ) : (
                       <>
                         <Link href="/login" onClick={() => setIsMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition">Log in or sign up</Link>
+                        <Link href="/wishlists" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50">Wishlists ❤️</Link>
                         <div className="my-1 border-t border-neutral-100" />
                         <Link href="/" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50">Explore homes</Link>
                       </>

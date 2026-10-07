@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useWishlist } from '@/context/WishlistContext';
 
 export interface ListingCardProps {
   id?: number | string;
@@ -30,8 +31,9 @@ export default function ListingCard({
   badgeText = "Guest favourite",
   priceLabel = "night"
 }: ListingCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [imgSrc, setImgSrc] = useState(imageUrl || FALLBACK_IMAGE);
+  const isLiked = isWishlisted(id || title);
 
   // Sync if imageUrl prop updates
   React.useEffect(() => {
@@ -110,7 +112,15 @@ export default function ListingCard({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          setIsLiked(!isLiked);
+          toggleWishlist({
+            id: id || title,
+            title,
+            location,
+            pricePerNight,
+            rating,
+            imageUrl: imgSrc,
+            propertyType
+          });
         }}
         className="absolute top-3 right-3 p-2 text-white hover:scale-115 active:scale-90 transition z-10"
       >

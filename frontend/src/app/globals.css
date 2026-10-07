@@ -11,13 +11,57 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Force Airbnb pure light theme */
+/* Force Airbnb pure light theme by default */
 html, body {
-  background-color: #ffffff !important;
-  color: #222222 !important;
+  background-color: #ffffff;
+  color: #222222;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Elegant Airbnb Dark Mode */
+html.dark, html.dark body {
+  background-color: #0f0f10 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark header,
+html.dark footer,
+html.dark main,
+html.dark nav,
+html.dark .bg-white {
+  background-color: #18181b !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .text-neutral-900,
+html.dark .text-neutral-800,
+html.dark [class*="text-[#222222]"] {
+  color: #f3f4f6 !important;
+}
+
+html.dark .text-neutral-500,
+html.dark .text-neutral-600,
+html.dark .text-neutral-700,
+html.dark [class*="text-[#717171]"] {
+  color: #a1a1aa !important;
+}
+
+html.dark .border-neutral-100,
+html.dark .border-neutral-200,
+html.dark .border-neutral-300 {
+  border-color: #27272a !important;
+}
+
+html.dark .bg-neutral-50,
+html.dark .bg-neutral-100 {
+  background-color: #27272a !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .bg-neutral-200 {
+  background-color: #3f3f46 !important;
 }
 
 /* Hide scrollbar for category horizontal carousel */

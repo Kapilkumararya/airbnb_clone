@@ -5,6 +5,27 @@ import Link from 'next/link';
 
 export default function Footer() {
   const [activeModal, setActiveModal] = useState<'language' | 'currency' | null>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const isDarkStored = typeof window !== 'undefined' && (localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark'));
+    if (isDarkStored) {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -125,10 +146,10 @@ export default function Footer() {
               <a href="#" className="hover:underline">Company details</a>
             </div>
 
-            <div className="flex items-center gap-6 font-semibold text-neutral-800">
+            <div className="flex items-center gap-5 font-semibold text-neutral-800">
               <button 
                 onClick={() => setActiveModal('language')}
-                className="flex items-center gap-2 hover:underline"
+                className="flex items-center gap-1.5 hover:underline"
               >
                 <span>🌐</span>
                 <span>English (IN)</span>
@@ -138,6 +159,13 @@ export default function Footer() {
                 className="hover:underline"
               >
                 <span>₹ INR</span>
+              </button>
+              <button 
+                onClick={toggleTheme}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-neutral-300 hover:border-black transition text-xs font-semibold"
+                title="Toggle dark mode"
+              >
+                <span>{isDark ? '☀️ Light' : '🌙 Dark'}</span>
               </button>
             </div>
           </div>

@@ -8,31 +8,31 @@ Built with **Next.js (TypeScript)** on the frontend, **Python (FastAPI)** on the
 
 ## 🌐 Live Deployment & Submission Links
 
-- **Frontend (Vercel):** `https://airbnb-clone-ten-silk.vercel.app/` 
-- **Backend (Render):** `https://airbnb-clone-bmvr.onrender.com`
+- **Frontend (Vercel):** `https://airbnb-clone-piut28426-kapilarya.vercel.app/` 
+- **Backend API (Render):** `https://airbnbclone-backend-e2el.onrender.com`
 - **GitHub Repository (Public):** `https://github.com/Kapilkumararya/airbnb_clone`
 
 ---
 
-## 🧪 Demo Invigilator Account (Evaluation Mode)
+## 🧪 Demo Evaluator Account (Evaluation Mode)
 
 For seamless evaluator and invigilator testing, the application includes a **Preloaded Dummy Evaluation Account**:
 
-- **Auto-Login on First Visit:** When visiting the app as a first-time or unknown visitor, the app **automatically signs in** to this dummy account.
+- **Auto-Login on First Visit:** When visiting the app as a first-time or unknown visitor, the app **automatically signs in** to this dummy account (`demo@airbnb.com` / `Demo Evaluator`).
 - **Preloaded Past Trips (3 Stays):**
   1. *Heritage Haveli with Courtyard & Private Rooftop* (Jaipur, Rajasthan) — Stay completed 25 days ago.
   2. *Cedar Wood Chalet with Himalayan Panoramic Views* (Manali, Himachal Pradesh) — Stay completed 45 days ago.
   3. *Riverfront Heritage Kothi Overlooking Assi Ghat* (Varanasi, Uttar Pradesh) — Stay completed 60 days ago.
-  - **Review Eligibility Verified:** Because the application enforces that **only guests who have completed a stay can review a property**, the invigilator can immediately test writing and submitting reviews on `/trips` or the stayed listings!
+  - **Review Eligibility Verified:** Because the application enforces that **only guests who have completed a stay can review a property**, the invigilator can immediately test writing and submitting reviews with stay photos on `/trips` or the stayed listings!
 - **Preloaded Hosted Properties (3 Listings):**
   1. *Luxury Beachfront Villa with Private Infinity Pool* (North Goa)
   2. *Modern Penthouse with View of Lotus Temple* (New Delhi)
   3. *Sea-Facing Luxury Apartment on Marine Drive* (Mumbai)
   - Preloaded with incoming bookings and revenue so the **Host Dashboard (`/host`)** metrics and reservation rows are immediately visible.
 - **Manual Credentials & 1-Click Login:**
-  - **Email:** `invigilator@airbnb.com`
+  - **Email:** `demo@airbnb.com`
   - **Password:** `demo123`
-  - On the **Login Page (`/login`)**, a **⚡ Log in as Demo Invigilator (1-Click)** button allows returning to the dummy account at any time after logging out or testing new accounts.
+  - On the **Login Page (`/login`)**, a **⚡ Log in as Demo Evaluator (1-Click)** button allows returning to the dummy account at any time after logging out or testing new accounts.
 
 ---
 
@@ -189,32 +189,47 @@ The SQLite database schema is built using SQLAlchemy models with foreign key con
 
 ## 🌟 Feature Highlights & Rubric Alignment
 
-1. **Home & Search:**
-   - Interactive Airbnb Search Bar with **Where** (destination selector), **When** (dual-month date range picker + flexible weekend/month search), and **Who** (adults, children, infants, pets counters).
-   - Category filter carousel (Beachfront, Iconic cities, Luxe, Mansions, Trending, etc.).
-   - "All" category button clears all filters and restores full catalog.
-   - Dynamic price toggle ("Show price per night" vs "Prices include all fees").
+1. **Home, Search & Discovery:**
+   - **Interactive Airbnb Search Bar:** Destination autocompletion (**Where**), Dual-month date picker (**When**), and segmented guest counters for adults, children, infants, and pets (**Who**).
+   - **Multi-Category Navigation:** Dynamic tabs for **Homes**, **Experiences**, and **Services** with search matching city, landmark, or activity.
+   - **Interactive Filters Modal:** Price range sliders (Min/Max in ₹), Property categories, Guest capacity, and **Amenities Selection** (Wifi, Pool, Kitchen, AC, Parking, Workspace, Pet friendly, etc.).
+   - **Clear All Filters:** One-click reset restores the entire catalog.
+   - **Pagination & Progress Indicator:** "Show more places" button with an animated progress bar (*"Showing X of Y stays"*).
 
-2. **Listing Detail Page:**
+2. **Interactive Map View with Live Price Pins (Bonus):**
+   - Floating toggle pill (`Show map 🗺️` / `Show list 📋`).
+   - Interactive styled vector map with coordinate pins displaying live nightly prices (`₹4,500`, `₹18,500`).
+   - Clicking pins pops up interactive floating listing preview cards with photo, rating, and direct link.
+
+3. **Persistent Wishlists & Toast Notifications:**
+   - Heart button on every listing card saves stays with instant feedback toasts (*"Saved to Wishlist ❤️"*).
+   - Dedicated **Wishlists Page (`/wishlists`)** displays all saved properties across sessions.
+
+4. **Listing Detail Page:**
    - 5-photo responsive grid gallery with hover zoom.
    - Dual-month interactive availability calendar that blocks already reserved dates.
    - Dynamic price calculation that scales fees and extra guest charges.
-   - "Meet your Host" card with Superhost badges and Guest-to-Host messaging modal placeholder.
+   - "Meet your Host" card with Superhost badges and Guest-to-Host messaging placeholder.
    - Styled map preview with pinned property location.
 
-3. **Booking & Verification Flow:**
+5. **Booking & Verification Flow:**
    - Overlap validation prevents double-booking.
    - Instant mocked checkout confirmation modal with itemized fee breakdown.
    - "My Trips & Bookings" page displaying upcoming and past trips with cancellation.
+   - Real-time calendar synchronization immediately blocks booked dates.
 
-4. **Completed-Stay Review Verification (Bonus):**
-   - Review form on the listing detail page only appears if the user has an officially completed stay.
-   - The My Trips page enables instant review submission on completed past bookings.
+6. **Host Experience (Full CRUD) with Photo Upload:**
+   - Host overview of owned listings, total revenue, and occupancy metrics (`/host`).
+   - Listing creation and editing (`/host/create` & `/host/edit/[id]`) with **Local Photo Upload** (direct from camera/device files via Data URLs), cover photo selector, thumbnail previews, and presets.
+   - Delete listings and update pricing in real-time.
 
-5. **Host Dashboard (CRUD):**
-   - Host overview of owned listings, total revenue, and occupancy metrics.
-   - Add new listing form with amenities selection and multiple photo URLs.
-   - Edit pricing and title or delete listings in real-time.
+7. **Guest Reviews with Stay Photos (Bonus):**
+   - Reviews restricted to guests with verified completed stays.
+   - Guests can attach local photos of their stay directly to reviews with thumbnail previews.
+
+8. **Theme & Responsive Design (Bonus):**
+   - **Dark Mode:** Quick toggle (`🌙 Dark` / `☀️ Light`) in footer and profile menu with tailored neutral palettes.
+   - **Mobile UI:** Adaptive header with dedicated mobile category pill row, responsive search pill, and centered modals.
 
 ---
 

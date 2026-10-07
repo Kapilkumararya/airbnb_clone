@@ -36,6 +36,9 @@ export default function CategoryNav() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [filterGuests, setFilterGuests] = useState(searchParams.get('guests') || '');
   const [modalCategory, setModalCategory] = useState(searchParams.get('category') || '');
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
+    searchParams.get('amenities') ? searchParams.get('amenities')!.split(',').filter(Boolean) : []
+  );
   
   // Tax toggle state
   const [showTaxes, setShowTaxes] = useState(searchParams.get('taxes') === '1');
@@ -81,7 +84,16 @@ export default function CategoryNav() {
     setMaxPrice(searchParams.get('maxPrice') || '');
     setFilterGuests(searchParams.get('guests') || '');
     setModalCategory(searchParams.get('category') || '');
+    setSelectedAmenities(
+      searchParams.get('amenities') ? searchParams.get('amenities')!.split(',').filter(Boolean) : []
+    );
     setIsModalOpen(true);
+  };
+
+  const toggleAmenity = (name: string) => {
+    setSelectedAmenities(prev => 
+      prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name]
+    );
   };
 
   const handleApplyFilters = () => {
@@ -98,6 +110,9 @@ export default function CategoryNav() {
     if (modalCategory.trim()) params.set('category', modalCategory.trim());
     else params.delete('category');
 
+    if (selectedAmenities.length > 0) params.set('amenities', selectedAmenities.join(','));
+    else params.delete('amenities');
+
     setIsModalOpen(false);
     router.push(`/?${params.toString()}`);
   };
@@ -107,11 +122,13 @@ export default function CategoryNav() {
     setMaxPrice('');
     setFilterGuests('');
     setModalCategory('');
+    setSelectedAmenities([]);
     const params = new URLSearchParams(searchParams.toString());
     params.delete('minPrice');
     params.delete('maxPrice');
     params.delete('guests');
     params.delete('category');
+    params.delete('amenities');
     setIsModalOpen(false);
     router.push(`/?${params.toString()}`);
   };
@@ -122,6 +139,7 @@ export default function CategoryNav() {
     searchParams.get('minPrice'),
     searchParams.get('maxPrice'),
     searchParams.get('guests'),
+    searchParams.get('amenities'),
   ].filter(Boolean).length;
 
   return (
@@ -328,6 +346,42 @@ export default function CategoryNav() {
                         }`}
                       >
                         {g}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Amenities */}
+              <div className="space-y-3 pb-6">
+                <h4 className="text-base font-bold text-neutral-900">Amenities</h4>
+                <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  {[
+                    { name: 'Wifi', icon: '📶' },
+                    { name: 'Pool', icon: '🏊‍♂️' },
+                    { name: 'Kitchen', icon: '🍳' },
+                    { name: 'Air conditioning', icon: '❄️' },
+                    { name: 'Free parking', icon: '🚗' },
+                    { name: 'Dedicated workspace', icon: '💼' },
+                    { name: 'Hot tub', icon: '🛁' },
+                    { name: 'Washer', icon: '🧺' },
+                    { name: 'Pet friendly', icon: '🐾' },
+                    { name: 'Beachfront', icon: '🏖️' },
+                  ].map(amenity => {
+                    const isSelected = selectedAmenities.includes(amenity.name);
+                    return (
+                      <button
+                        key={amenity.name}
+                        type="button"
+                        onClick={() => toggleAmenity(amenity.name)}
+                        className={`flex items-center gap-2.5 p-3 rounded-2xl border text-xs font-semibold transition text-left ${
+                          isSelected
+                            ? 'border-black bg-neutral-900 text-white shadow-xs'
+                            : 'border-neutral-200 bg-white text-neutral-800 hover:border-black'
+                        }`}
+                      >
+                        <span className="text-base">{amenity.icon}</span>
+                        <span>{amenity.name}</span>
                       </button>
                     );
                   })}

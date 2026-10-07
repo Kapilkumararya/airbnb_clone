@@ -1,9 +1,8 @@
 import Header from '@/components/Header';
 import CategoryNav from '@/components/CategoryNav';
-import ListingCard from '@/components/ListingCard';
 import InspirationSection from '@/components/InspirationSection';
+import HomeExploreView from '@/components/HomeExploreView';
 import { fetchListings } from '@/lib/api';
-import Link from 'next/link';
 import Footer from '@/components/Footer';
 
 export const dynamic = 'force-dynamic';
@@ -46,7 +45,7 @@ const ALL_EXPERIENCES = [
 
 export default async function Page({ searchParams }: { searchParams: Promise<any> }) {
   const resolvedSearchParams = await searchParams;
-  const listings = await fetchListings(resolvedSearchParams);
+  let listings = await fetchListings(resolvedSearchParams);
 
   const type = resolvedSearchParams?.type || 'All';
   const searchedLoc = resolvedSearchParams?.location?.trim();
@@ -58,8 +57,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
   let badgeLabel = 'Guest favourite';
   let priceLabel = showTaxes ? 'total before taxes' : 'night';
 
-  let topListings = listings ? listings.slice(0, 6) : [];
-  let bottomListings = listings ? listings.slice(6) : [];
+  let currentListings = listings || [];
 
   if (type === 'Services') {
     let filtered = ALL_SERVICES;
@@ -87,9 +85,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     bottomTitle = searchedLoc ? `More recommended services in ${searchedLoc}` : 'Popular services across destinations';
     badgeLabel = 'Service';
     priceLabel = 'service';
-
-    topListings = filtered.slice(0, 6);
-    bottomListings = filtered.slice(6);
+    currentListings = filtered;
   } else if (type === 'Experiences') {
     let filtered = ALL_EXPERIENCES;
     if (searchedLoc) {
@@ -115,9 +111,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     bottomTitle = searchedLoc ? `More activities in ${searchedLoc}` : 'Popular with travellers from your area';
     badgeLabel = 'Original';
     priceLabel = 'guest';
-
-    topListings = filtered.slice(0, 6);
-    bottomListings = filtered.slice(6);
+    currentListings = filtered;
+  } else {
+    // Homes or All: Filter by amenities if selected in modal
+    if (resolvedSearchParams?.amenities) {
+      const reqAmenities = resolvedSearchParams.amenities.split(',').map((a: string) => a.trim().toLowerCase());
+      currentListings = currentListings.filter((l: any) => {
+        const listAmenities = (l.amenities || []).map((a: string) => (typeof a === 'string' ? a.toLowerCase() : ''));
+        return reqAmenities.every((reqA: string) =>
+          listAmenities.some((listA: string) => listA.includes(reqA) || reqA.includes(listA))
+        );
+      });
+    }
   }
 
   const hasActiveFilters = Boolean(
@@ -129,6 +134,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     resolvedSearchParams?.minPrice ||
     resolvedSearchParams?.maxPrice ||
     resolvedSearchParams?.flexible ||
+    resolvedSearchParams?.amenities ||
     (resolvedSearchParams?.type && resolvedSearchParams.type.toLowerCase() !== 'all')
   );
 
@@ -139,130 +145,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-[1780px] w-full mx-auto px-6 sm:px-10 lg:px-16 py-8">
-        {/* Listings Section 1 */}
-        {topListings && topListings.length > 0 ? (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#222222] flex items-center gap-2 group cursor-pointer">
-                  <span>{topTitle}</span>
-                  <svg className="w-5 h-5 text-neutral-800 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </h2>
-                {topSubtitle && <p className="text-sm text-neutral-500 mt-0.5">{topSubtitle}</p>}
-              </div>
-              {hasActiveFilters && (
-                <Link
-                  href="/"
-                  className="px-4 py-2 rounded-full border border-neutral-300 text-xs font-semibold text-neutral-800 hover:border-black hover:bg-neutral-50 transition flex items-center gap-2 shadow-xs shrink-0"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  <span>Clear all filters</span>
-                </Link>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-10 mb-16">
-              {topListings.map((item: any) => (
-                <ListingCard 
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  location={item.location}
-                  pricePerNight={showTaxes ? Math.round(item.price_per_night * 5) : item.price_per_night}
-                  rating={item.rating || 4.95}
-                  propertyType={item.property_type}
-                  imageUrl={item.images?.[0]?.image_url || item.image_url || "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"}
-                  badgeText={badgeLabel}
-                  priceLabel={priceLabel}
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-20 space-y-4 max-w-lg mx-auto">
-            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto text-neutral-400">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-neutral-900">No exact matches found</h3>
-            <p className="text-sm text-neutral-500">
-              Try searching one of these popular destinations with available stays:
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center pt-2">
-              {[
-                { name: "New Delhi", icon: "🏙️" },
-                { name: "Mumbai", icon: "🌆" },
-                { name: "North Goa", icon: "🏝️" },
-                { name: "Varanasi", icon: "🏛️" },
-                { name: "Bhopal", icon: "🏖️" },
-                { name: "Jaipur", icon: "🏰" },
-                { name: "Manali", icon: "🏔️" },
-                { name: "Udaipur", icon: "⛵" },
-                { name: "Munnar", icon: "🌿" }
-              ].map((dest) => (
-                <Link
-                  key={dest.name}
-                  href={`/?location=${encodeURIComponent(dest.name)}`}
-                  className="px-4 py-2 border border-neutral-300 rounded-full text-xs font-semibold text-neutral-800 hover:border-black hover:bg-neutral-50 transition flex items-center gap-1.5"
-                >
-                  <span>{dest.icon}</span>
-                  <span>{dest.name}</span>
-                </Link>
-              ))}
-            </div>
-            <div className="pt-3">
-              <Link href="/" className="inline-block px-6 py-2.5 bg-[#222222] text-white rounded-xl text-sm font-semibold hover:bg-neutral-800 transition">
-                View all listings
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Listings Section 2 */}
-        {bottomListings && bottomListings.length > 0 && (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#222222] flex items-center gap-2 group cursor-pointer">
-                  <span>{bottomTitle}</span>
-                  <svg className="w-5 h-5 text-neutral-800 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </h2>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-10">
-              {bottomListings.map((item: any) => (
-                <ListingCard 
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  location={item.location}
-                  pricePerNight={showTaxes ? Math.round(item.price_per_night * 5) : item.price_per_night}
-                  rating={item.rating || 4.95}
-                  propertyType={item.property_type}
-                  imageUrl={item.images?.[0]?.image_url || item.image_url || "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"}
-                  badgeText={badgeLabel}
-                  priceLabel={priceLabel}
-                />
-              ))}
-            </div>
-          </>
-        )}
-        {/* Floating Pill: Prices include all fees */}
-        <Link 
-          href={`/?${new URLSearchParams({ ...(resolvedSearchParams || {}), taxes: showTaxes ? '0' : '1' }).toString()}`}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 shadow-lg bg-white border border-neutral-300 rounded-full px-5 py-2.5 flex items-center gap-2 font-semibold text-sm hover:shadow-xl hover:scale-105 transition duration-200 cursor-pointer select-none"
-        >
-          <span className="text-[#FF385C]">🏷️</span>
-          <span className="text-[#222222]">{showTaxes ? 'Show price per night' : 'Prices include all fees'}</span>
-        </Link>
+        <HomeExploreView
+          listings={currentListings}
+          topTitle={topTitle}
+          topSubtitle={topSubtitle}
+          bottomTitle={bottomTitle}
+          showTaxes={showTaxes}
+          badgeLabel={badgeLabel}
+          priceLabel={priceLabel}
+          hasActiveFilters={hasActiveFilters}
+          type={type}
+          resolvedSearchParams={resolvedSearchParams}
+        />
 
         {/* Functional Inspiration for future getaways */}
         <InspirationSection />
