@@ -23,8 +23,11 @@ export default function CreateListingPage() {
     price_per_night: 8500,
     property_type: 'Beachfront',
     max_guests: 4,
-    image_url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80',
   });
+  const [images, setImages] = useState<string[]>([
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80'
+  ]);
+  const [urlInput, setUrlInput] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(["Fast Wifi", "Air Conditioning", "Free Parking"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -43,14 +46,56 @@ export default function CreateListingPage() {
     );
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        if (dataUrl) {
+          setImages(prev => [...prev, dataUrl]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  };
+
+  const handleAddUrl = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    if (urlInput.trim()) {
+      setImages(prev => [...prev, urlInput.trim()]);
+      setUrlInput('');
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSetPrimary = (index: number) => {
+    setImages(prev => {
+      const selected = prev[index];
+      const rest = prev.filter((_, i) => i !== index);
+      return [selected, ...rest];
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    const finalPrimary = images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80';
+
     try {
       await createListing({
         ...formData,
+        image_url: finalPrimary,
+        images: images.length > 0 ? images : [finalPrimary],
         amenities: selectedAmenities,
       }, token || undefined);
 
@@ -170,20 +215,120 @@ export default function CreateListingPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
-                Primary Image URL
-              </label>
-              <input 
-                required 
-                type="url" 
-                name="image_url" 
-                value={formData.image_url} 
-                onChange={handleChange} 
-                className="w-full p-3.5 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-black focus:outline-none text-sm" 
-                placeholder="https://images.unsplash.com/..." 
-              />
-              <p className="text-xs text-neutral-400 mt-1">Provide a high-resolution Unsplash or direct image link.</p>
+            {/* Property Photos: Local Upload + URL Gallery Manager */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+                  Property Photos ({images.length})
+                </label>
+                <span className="text-xs text-neutral-500 font-medium">First photo will be the main display cover</span>
+              </div>
+
+              {/* Upload Box: File picker from device */}
+              <div className="border-2 border-dashed border-neutral-300 hover:border-black rounded-2xl p-6 text-center transition bg-neutral-50 hover:bg-neutral-100/50">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  id="listing-photo-upload" 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                />
+                <label htmlFor="listing-photo-upload" className="cursor-pointer flex flex-col items-center justify-center space-y-2">
+                  <div className="w-12 h-12 bg-white rounded-full shadow-sm border border-neutral-200 flex items-center justify-center text-xl">
+                    📸
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-neutral-900 hover:underline">Upload photos from device</span>
+                    <p className="text-xs text-neutral-500 mt-0.5">Click to choose from your gallery or files (PNG, JPG, WEBP)</p>
+                  </div>
+                  <span className="inline-block px-4 py-1.5 bg-neutral-900 hover:bg-black text-white text-xs font-semibold rounded-full shadow-xs transition">
+                    Browse Local Files
+                  </span>
+                </label>
+              </div>
+
+              {/* Or Add Photo via URL */}
+              <div className="flex gap-2">
+                <input 
+                  type="url" 
+                  value={urlInput} 
+                  onChange={(e) => setUrlInput(e.target.value)} 
+                  onKeyDown={(e) => e.key === "Enter" && handleAddUrl(e)}
+                  className="flex-1 p-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-black focus:outline-none text-xs" 
+                  placeholder="Or paste an image URL (e.g. Unsplash) and click Add..." 
+                />
+                <button 
+                  type="button" 
+                  onClick={handleAddUrl} 
+                  className="px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold rounded-xl transition cursor-pointer"
+                >
+                  + Add URL
+                </button>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span className="text-neutral-400 font-medium shrink-0">Quick presets:</span>
+                {[
+                  { name: "🏖️ Beach Villa", url: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80" },
+                  { name: "🏊 Pool Sunset", url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" },
+                  { name: "🏔️ Mountain Chalet", url: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" },
+                  { name: "🛋️ Luxe Interior", url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" }
+                ].map(p => (
+                  <button 
+                    key={p.name} 
+                    type="button" 
+                    onClick={() => setImages(prev => [...prev, p.url])} 
+                    className="px-2.5 py-1 bg-white border border-neutral-200 rounded-full hover:border-black text-[11px] font-medium shrink-0 transition"
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Photo Gallery Grid */}
+              {images.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  {images.map((img, idx) => (
+                    <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-neutral-200 group bg-neutral-100 shadow-xs">
+                      <img 
+                        src={img} 
+                        alt={`Listing Photo ${idx + 1}`} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80";
+                        }}
+                      />
+                      {idx === 0 ? (
+                        <span className="absolute bottom-1.5 left-1.5 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          ★ Cover Photo
+                        </span>
+                      ) : (
+                        <button 
+                          type="button" 
+                          onClick={() => handleSetPrimary(idx)} 
+                          className="absolute bottom-1.5 left-1.5 bg-white/90 hover:bg-white text-neutral-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                        >
+                          Make Cover
+                        </button>
+                      )}
+                      <button 
+                        type="button" 
+                        onClick={() => handleRemoveImage(idx)} 
+                        className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/70 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition cursor-pointer"
+                        title="Remove photo"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">
+                  Please upload at least 1 photo for your listing.
+                </p>
+              )}
             </div>
 
             {/* Amenities Checkboxes */}

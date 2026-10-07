@@ -18,6 +18,7 @@ function TripsContent() {
   const [reviewModalBooking, setReviewModalBooking] = useState<any | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
+  const [reviewPhotos, setReviewPhotos] = useState<string[]>([]);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewedBookings, setReviewedBookings] = useState<Record<number, boolean>>({});
@@ -26,7 +27,26 @@ function TripsContent() {
     setReviewModalBooking(booking);
     setReviewRating(5);
     setReviewComment('');
+    setReviewPhotos([]);
     setReviewError('');
+  };
+
+  const handleReviewPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        if (dataUrl) {
+          setReviewPhotos(prev => [...prev, dataUrl]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -39,9 +59,14 @@ function TripsContent() {
     try {
       setIsSubmittingReview(true);
       setReviewError('');
+
+      const finalComment = reviewPhotos.length > 0 
+        ? `${reviewComment.trim()}\n\n<!-- PHOTOS: ${JSON.stringify(reviewPhotos)} -->` 
+        : reviewComment.trim();
+
       await addReview(reviewModalBooking.listing_id, {
         rating: reviewRating,
-        comment: reviewComment
+        comment: finalComment
       }, token || undefined);
       setReviewedBookings(prev => ({ ...prev, [reviewModalBooking.id]: true }));
       setFeedback(`🎉 Thank you! Your review has been published for ${reviewModalBooking.listing?.title || 'your stay'}.`);
@@ -294,6 +319,46 @@ function TripsContent() {
                   placeholder="How was your host, check-in, cleanliness, and overall experience?"
                   className="w-full p-3.5 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-black focus:outline-none bg-white"
                 />
+              </div>
+
+              {/* Photo Upload Attachment */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    id="trips-review-photo-upload" 
+                    onChange={handleReviewPhotoUpload} 
+                    className="hidden" 
+                  />
+                  <label 
+                    htmlFor="trips-review-photo-upload" 
+                    className="inline-flex items-center gap-2 px-3.5 py-2 border border-neutral-300 rounded-xl text-xs font-semibold hover:border-black cursor-pointer bg-white transition shadow-xs"
+                  >
+                    <span>📸</span>
+                    <span>Attach photos ({reviewPhotos.length})</span>
+                  </label>
+                  <span className="text-xs text-neutral-400">Optional: show off your trip</span>
+                </div>
+
+                {reviewPhotos.length > 0 && (
+                  <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar pt-1">
+                    {reviewPhotos.map((photo, i) => (
+                      <div key={i} className="relative w-14 h-14 rounded-xl overflow-hidden border border-neutral-200 shrink-0 group shadow-xs">
+                        <img src={photo} alt={`Attached ${i + 1}`} className="w-full h-full object-cover" />
+                        <button 
+                          type="button" 
+                          onClick={() => setReviewPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                          className="absolute top-1 right-1 w-4 h-4 bg-black/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] transition cursor-pointer"
+                          title="Remove photo"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {reviewError && (

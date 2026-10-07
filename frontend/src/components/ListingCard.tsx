@@ -16,6 +16,8 @@ export interface ListingCardProps {
   priceLabel?: string;
 }
 
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80";
+
 export default function ListingCard({
   id,
   title,
@@ -29,6 +31,12 @@ export default function ListingCard({
   priceLabel = "night"
 }: ListingCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const [imgSrc, setImgSrc] = useState(imageUrl || FALLBACK_IMAGE);
+
+  // Sync if imageUrl prop updates
+  React.useEffect(() => {
+    setImgSrc(imageUrl || FALLBACK_IMAGE);
+  }, [imageUrl]);
 
   return (
     <div className="group block relative">
@@ -38,7 +46,10 @@ export default function ListingCard({
           <img 
             alt={title} 
             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" 
-            src={imageUrl} 
+            src={imgSrc} 
+            onError={() => {
+              if (imgSrc !== FALLBACK_IMAGE) setImgSrc(FALLBACK_IMAGE);
+            }}
             loading="lazy"
           />
           

@@ -274,16 +274,16 @@ export default function Header() {
 
   return (
     <>
-      <div className="h-[170px] w-full shrink-0" />
+      <div className="h-[180px] sm:h-[170px] w-full shrink-0" />
       
       {activeDropdown && (
         <div className="fixed inset-0 bg-black/10 z-30" onClick={() => setActiveDropdown(null)} />
       )}
 
       <header className="fixed top-0 left-0 w-full z-40 bg-white border-b border-neutral-200 transition-all duration-300">
-        <div className="max-w-[1780px] mx-auto px-6 sm:px-10 lg:px-16 pt-3">
+        <div className="max-w-[1780px] mx-auto px-4 sm:px-10 lg:px-16 pt-2 sm:pt-3">
           {/* Top Navbar Row */}
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}
             <Link 
               href="/" 
@@ -298,18 +298,18 @@ export default function Header() {
                 setDateTab('Dates');
                 setActiveDropdown(null);
               }}
-              className="flex items-center gap-2 focus:outline-none group flex-1"
+              className="flex items-center gap-2 focus:outline-none group shrink-0"
             >
-              <svg className="h-8 w-8 text-[#FF385C] transition-transform duration-200 group-hover:scale-105" fill="currentColor" viewBox="0 0 32 32">
-                <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.479.96 3.525.127 2.635-.91 5.093-2.84 6.745C24.78 32.324 22.127 33 19.34 33c-2.316 0-4.434-.567-6.077-1.636l-.377-.258c-.302-.216-.583-.45-.886-.713-.303.263-.584.497-.886.713l-.377.258C8.995 32.433 6.877 33 4.561 33c-2.788 0-5.44-.676-7.31-2.272-1.93-1.652-2.967-4.11-2.84-6.745.05-1.046.293-1.934.96-3.525l.145-.353c.986-2.296 5.146-11.006 7.1-14.836l.533-1.025C4.437 1.963 5.892 1 7.9 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c.42.823 1.077 2.148 1.816 3.666.739-1.518 1.396-2.843 1.816-3.666l.533-1.025C18.437 1.963 19.892 1 21.9 1zM16 23.4c-2.457 0-4.4 1.879-4.4 4.2 0 1.516.828 2.81 2.062 3.551.693.417 1.488.649 2.338.649.85 0 1.645-.232 2.338-.649C19.572 30.41 20.4 29.116 20.4 27.6c0-2.321-1.943-4.2-4.4-4.2zm0-18.4c-.605 0-1.127.35-1.93 1.895l-.396.772c-1.892 3.73-6.002 12.335-6.93 14.536l-.119.294c-.53 1.285-.71 1.916-.744 2.65-.084 1.76.602 3.407 1.884 4.504 1.258 1.078 3.056 1.549 4.935 1.549 1.516 0 2.923-.332 4.07-.941a6.07 6.07 0 0 0 .83-.538c.15-.12.3-.248.45-.382l.45.382c.264.225.541.405.83.538 1.147.609 2.554.941 4.07.941 1.879 0 3.677-.471 4.935-1.549 1.282-1.097 1.968-2.744 1.884-4.504-.034-.734-.214-1.365-.744-2.65l-.119-.294c-.928-2.201-5.038-10.806-6.93-14.536l-.396-.772C17.127 5.35 16.605 5 16 5z" />
+              <svg className="h-8 w-8 text-[#FF385C] shrink-0 transition-transform duration-200 group-hover:scale-105" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.001 18.275c-1.353-1.697-2.148-3.184-2.413-4.457-.263-1.027-.16-1.848.291-2.465.477-.71 1.188-1.056 2.121-1.056s1.643.345 2.12 1.063c.446.61.558 1.432.286 2.465-.291 1.298-1.085 2.785-2.412 4.458zm9.601 1.14c-.185 1.246-1.034 2.28-2.2 2.783-2.253.98-4.483-.583-6.392-2.704 3.157-3.951 3.74-7.028 2.385-9.018-.795-1.14-1.933-1.695-3.394-1.695-2.944 0-4.563 2.49-3.927 5.382.37 1.565 1.352 3.343 2.917 5.332-.98 1.085-1.91 1.856-2.732 2.333-.636.344-1.245.558-1.828.609-2.679.399-4.778-2.2-3.825-4.88.132-.345.395-.98.845-1.961l.025-.053c1.464-3.178 3.242-6.79 5.285-10.795l.053-.132.58-1.116c.45-.822.635-1.19 1.351-1.643.346-.21.77-.315 1.246-.315.954 0 1.698.558 2.016 1.007.158.239.345.557.582.953l.558 1.089.08.159c2.041 4.004 3.821 7.608 5.279 10.794l.026.025.533 1.22.318.764c.243.613.294 1.222.213 1.858zm1.22-2.39c-.186-.583-.505-1.271-.9-2.094v-.03c-1.889-4.006-3.642-7.608-5.307-10.844l-.111-.163C15.317 1.461 14.468 0 12.001 0c-2.44 0-3.476 1.695-4.535 3.898l-.081.16c-1.669 3.236-3.421 6.843-5.303 10.847v.053l-.559 1.22c-.21.504-.317.768-.345.847C-.172 20.74 2.611 24 5.98 24c.027 0 .132 0 .265-.027h.372c1.75-.213 3.554-1.325 5.384-3.317 1.829 1.989 3.635 3.104 5.382 3.317h.372c.133.027.239.027.265.027 3.37.003 6.152-3.261 4.802-6.975z" />
               </svg>
-              <span className="text-2xl font-bold tracking-tight text-[#FF385C] hidden xl:inline">airbnb</span>
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#FF385C] hidden sm:inline">airbnb</span>
             </Link>
 
-            {/* Center Content: Tabs or Compact Search */}
-            <div className="flex-none md:flex-1 flex justify-center transition-all duration-300">
+            {/* Desktop Center Tabs / Compact Scrolled Search */}
+            <div className="hidden sm:flex flex-1 justify-center transition-all duration-300">
               {isScrolled ? (
-                <button onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); }} className="hidden sm:flex items-center border border-neutral-300 rounded-full py-2 px-2 pl-4 shadow-sm hover:shadow-md transition bg-white animate-in fade-in slide-in-from-top-2 duration-300">
+                <button onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); }} className="flex items-center border border-neutral-300 rounded-full py-2 px-2 pl-4 shadow-sm hover:shadow-md transition bg-white animate-in fade-in slide-in-from-top-2 duration-300">
                   <span className="flex items-center gap-2 text-sm font-medium px-4 border-r border-neutral-300">
                     <span className="text-lg">{activeTab === 'Services' ? '🛎️' : '🛖'}</span>
                     Anywhere
@@ -437,18 +437,43 @@ export default function Header() {
             </div>
           </div>
 
+          {/* Mobile Navigation Tabs Row: shown only on mobile (<sm) when not scrolled */}
+          {!isScrolled && (
+            <div className="sm:hidden flex items-center justify-between px-1 py-1.5 border-t border-neutral-100">
+              <nav aria-label="Mobile categories" className="flex items-center justify-between w-full gap-1 overflow-x-auto no-scrollbar">
+                {navTabs.map(tab => {
+                  const isSelected = activeTab === tab.name;
+                  return (
+                    <button 
+                      key={tab.name}
+                      onClick={() => handleTabClick(tab.name)}
+                      className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold transition-all shrink-0 ${
+                        isSelected 
+                          ? 'bg-neutral-900 text-white shadow-xs' 
+                          : 'text-neutral-600 hover:bg-neutral-100 bg-neutral-50'
+                      }`}
+                    >
+                      <span className="text-sm">{tab.icon}</span>
+                      <span>{tab.name}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
+
           {/* Search Bar Floating Pill */}
-          <div className={`overflow-visible transition-all duration-300 origin-top flex justify-center relative ${isScrolled ? 'h-0 opacity-0 mb-0 pointer-events-none' : 'h-[84px] opacity-100 mb-4 pt-4'}`}>
-            <div className={`flex w-full max-w-[850px] border border-neutral-300 rounded-full transition duration-200 items-center relative h-[64px] ${activeDropdown ? 'bg-neutral-100' : 'bg-white shadow-sm hover:shadow-md'}`}>
+          <div className={`overflow-visible transition-all duration-300 origin-top flex justify-center relative ${isScrolled ? 'h-0 opacity-0 mb-0 pointer-events-none' : 'h-[72px] sm:h-[84px] opacity-100 mb-3 sm:mb-4 pt-1 sm:pt-4'}`}>
+            <div className={`flex w-full max-w-[850px] border border-neutral-300 rounded-full transition duration-200 items-center relative h-[56px] sm:h-[64px] ${activeDropdown ? 'bg-neutral-100' : 'bg-white shadow-sm hover:shadow-md'}`}>
               
               {/* Where Field */}
               <div 
                 onClick={() => setActiveDropdown('where')}
-                className={`flex-[1.4] py-2 pl-8 pr-4 rounded-full cursor-pointer transition text-left h-full flex flex-col justify-center relative ${activeDropdown === 'where' ? 'bg-white shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-10' : 'hover:bg-neutral-200'}`}
+                className={`flex-[1.4] py-1 sm:py-2 pl-4 sm:pl-8 pr-2 sm:pr-4 rounded-full cursor-pointer transition text-left h-full flex flex-col justify-center relative ${activeDropdown === 'where' ? 'bg-white shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-10' : 'hover:bg-neutral-200'}`}
               >
-                <div className="text-[12px] font-bold text-neutral-900">Where</div>
+                <div className="text-[11px] sm:text-[12px] font-bold text-neutral-900">Where</div>
                 <input 
-                  className="w-full p-0 bg-transparent border-0 text-[14px] text-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-0 truncate font-normal" 
+                  className="w-full p-0 bg-transparent border-0 text-[13px] sm:text-[14px] text-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-0 truncate font-normal" 
                   placeholder={activeTab === 'Experiences' ? "Search by city or landmark" : "Search destinations"} 
                   type="text" 
                   value={location} 
@@ -457,7 +482,7 @@ export default function Header() {
                 />
               </div>
               
-              <div className="w-[1px] h-8 bg-neutral-300" />
+              <div className="w-[1px] h-6 sm:h-8 bg-neutral-300" />
               
               {/* When Field */}
               <div 
@@ -470,28 +495,28 @@ export default function Header() {
                 </div>
               </div>
 
-              <div className="w-[1px] h-8 bg-neutral-300" />
+              <div className="w-[1px] h-6 sm:h-8 bg-neutral-300 hidden sm:block" />
 
               {/* Who Field */}
               <div 
                 onClick={() => setActiveDropdown('who')}
-                className={`flex-[1.4] py-2 pl-6 pr-2.5 flex items-center justify-between rounded-full cursor-pointer transition text-left h-full relative ${activeDropdown === 'who' ? 'bg-white shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-10' : 'hover:bg-neutral-200'}`}
+                className={`flex-[1.4] py-1 sm:py-2 pl-3 sm:pl-6 pr-1.5 sm:pr-2.5 flex items-center justify-between rounded-full cursor-pointer transition text-left h-full relative ${activeDropdown === 'who' ? 'bg-white shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-10' : 'hover:bg-neutral-200'}`}
               >
                 <div>
-                  <div className="text-[12px] font-bold text-neutral-900">{activeTab === 'Services' ? 'Type of service' : 'Who'}</div>
-                  <div className="text-[14px] text-neutral-500 font-normal truncate max-w-[120px]">
+                  <div className="text-[11px] sm:text-[12px] font-bold text-neutral-900">{activeTab === 'Services' ? 'Service' : 'Who'}</div>
+                  <div className="text-[12px] sm:text-[14px] text-neutral-500 font-normal truncate max-w-[85px] sm:max-w-[120px]">
                      {activeTab === 'Services' 
                        ? (selectedService || 'Add service') 
-                       : (totalGuests > 0 ? `${totalGuests} guests${guests.infants > 0 ? `, ${guests.infants} infants` : ''}` : 'Add guests')
+                       : (totalGuests > 0 ? `${totalGuests} guests${guests.infants > 0 ? `, ${guests.infants}i` : ''}` : 'Add guests')
                      }
                   </div>
                 </div>
                 <button 
-                  className="h-12 px-5 rounded-full bg-[#FF385C] hover:bg-[#E00B41] text-white flex items-center justify-center transition shadow-sm hover:scale-105 active:scale-95 ml-auto shrink-0 gap-2 font-semibold" 
+                  className="h-10 sm:h-12 px-3 sm:px-5 rounded-full bg-[#FF385C] hover:bg-[#E00B41] text-white flex items-center justify-center transition shadow-sm hover:scale-105 active:scale-95 ml-auto shrink-0 gap-1.5 sm:gap-2 font-semibold" 
                   title="Search" 
                   onClick={(e) => { e.stopPropagation(); handleSearch(); setActiveDropdown(null); }}
                 >
-                  <svg className="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 sm:w-4 h-3.5 sm:h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <span className="hidden md:inline">Search</span>
@@ -509,7 +534,7 @@ export default function Header() {
                 });
 
                 return (
-                  <div ref={dropdownRef} className="absolute top-[80px] left-0 w-[490px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-6 z-50 border border-neutral-200 animate-in fade-in zoom-in-95 duration-150" onClick={(e) => e.stopPropagation()}>
+                  <div ref={dropdownRef} className="absolute top-[66px] sm:top-[80px] left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 w-[calc(100vw-24px)] sm:w-[490px] max-w-[490px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-4 sm:p-6 z-50 border border-neutral-200 animate-in fade-in zoom-in-95 duration-150" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-between mb-3 px-1">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Search by destination</h3>
                       <span className="text-xs font-medium text-neutral-400">{filteredDestinations.length} destinations</span>
@@ -628,7 +653,7 @@ export default function Header() {
                 };
 
                 return isDoubleMonth ? (
-                  <div ref={dropdownRef} className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[850px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-8 z-50 flex flex-col border border-neutral-200" onClick={(e) => e.stopPropagation()}>
+                  <div ref={dropdownRef} className="absolute top-[66px] sm:top-[80px] left-1/2 -translate-x-1/2 w-[calc(100vw-24px)] sm:w-[850px] max-w-[850px] max-h-[82vh] overflow-y-auto bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-4 sm:p-8 z-50 flex flex-col border border-neutral-200" onClick={(e) => e.stopPropagation()}>
                     <div className="flex justify-center mb-6">
                       <div className="bg-neutral-100 p-1 rounded-full flex gap-1">
                         <button 
@@ -650,7 +675,7 @@ export default function Header() {
 
                     {dateTab === 'Dates' ? (
                       <>
-                        <div className="flex relative">
+                        <div className="flex flex-col sm:flex-row relative gap-4">
                           <button onClick={handlePrevMonth} className="absolute left-2 top-2 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition z-10 cursor-pointer">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                           </button>
@@ -658,7 +683,9 @@ export default function Header() {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                           </button>
                           {renderMonth(0)}
-                          {renderMonth(1)}
+                          <div className="hidden sm:block flex-1">
+                            {renderMonth(1)}
+                          </div>
                         </div>
                         <div className="mt-8 flex gap-2 flex-wrap justify-center">
                           {["Exact dates", "± 1 day", "± 2 days", "± 3 days", "± 7 days", "± 14 days"].map((btn) => (
@@ -680,8 +707,8 @@ export default function Header() {
                               onClick={() => setFlexibleDuration(dur)}
                               className={`px-6 py-2 rounded-full text-sm transition cursor-pointer ${
                                 flexibleDuration === dur
-                                  ? 'border border-neutral-900 bg-white text-neutral-900 font-semibold shadow-sm'
-                                  : 'border border-neutral-200 hover:border-neutral-400 text-neutral-700 bg-white font-normal'
+                                   ? 'border border-neutral-900 bg-white text-neutral-900 font-semibold shadow-sm'
+                                   : 'border border-neutral-200 hover:border-neutral-400 text-neutral-700 bg-white font-normal'
                               }`}
                             >
                               {dur}
@@ -754,21 +781,21 @@ export default function Header() {
                     )}
                   </div>
                 ) : (
-                  <div ref={dropdownRef} className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[750px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-8 z-50 flex border border-neutral-200" onClick={(e) => e.stopPropagation()}>
+                  <div ref={dropdownRef} className="absolute top-[66px] sm:top-[80px] left-1/2 -translate-x-1/2 w-[calc(100vw-24px)] sm:w-[750px] max-w-[750px] max-h-[82vh] overflow-y-auto bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-4 sm:p-8 z-50 flex flex-col sm:flex-row border border-neutral-200" onClick={(e) => e.stopPropagation()}>
                     {/* Left Sidebar */}
-                    <div className="w-1/3 pr-8 flex flex-col gap-4 border-r border-neutral-200">
-                       <div className="p-4 border border-neutral-200 rounded-xl hover:border-black cursor-pointer transition" onClick={() => { const today = new Date(new Date().setHours(0,0,0,0)); setCheckIn(today); setCheckOut(today); }}>
-                         <div className="font-semibold text-neutral-800">Today</div>
-                         <div className="text-sm text-neutral-500">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
+                    <div className="w-full sm:w-1/3 sm:pr-8 flex flex-row sm:flex-col gap-2 sm:gap-4 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 mb-3 sm:mb-0">
+                       <div className="flex-1 p-3 sm:p-4 border border-neutral-200 rounded-xl hover:border-black cursor-pointer transition" onClick={() => { const today = new Date(new Date().setHours(0,0,0,0)); setCheckIn(today); setCheckOut(today); }}>
+                         <div className="font-semibold text-xs sm:text-base text-neutral-800">Today</div>
+                         <div className="text-xs sm:text-sm text-neutral-500">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
                        </div>
-                       <div className="p-4 border border-neutral-200 rounded-xl hover:border-black cursor-pointer transition" onClick={() => { const tmr = new Date(new Date().setHours(0,0,0,0)); tmr.setDate(tmr.getDate() + 1); setCheckIn(tmr); setCheckOut(tmr); }}>
-                         <div className="font-semibold text-neutral-800">Tomorrow</div>
-                         <div className="text-sm text-neutral-500">{(() => { const tmr = new Date(); tmr.setDate(tmr.getDate() + 1); return tmr.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) })()}</div>
+                       <div className="flex-1 p-3 sm:p-4 border border-neutral-200 rounded-xl hover:border-black cursor-pointer transition" onClick={() => { const tmr = new Date(new Date().setHours(0,0,0,0)); tmr.setDate(tmr.getDate() + 1); setCheckIn(tmr); setCheckOut(tmr); }}>
+                         <div className="font-semibold text-xs sm:text-base text-neutral-800">Tomorrow</div>
+                         <div className="text-xs sm:text-sm text-neutral-500">{(() => { const tmr = new Date(); tmr.setDate(tmr.getDate() + 1); return tmr.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) })()}</div>
                        </div>
                     </div>
 
                     {/* Calendar Area */}
-                    <div className="w-2/3 pl-4 flex flex-col relative">
+                    <div className="w-full sm:w-2/3 sm:pl-4 flex flex-col relative">
                       <button onClick={handlePrevMonth} className="absolute left-6 top-0 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition z-10">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                       </button>
@@ -782,7 +809,7 @@ export default function Header() {
               })()}
 
               {activeDropdown === 'who' && activeTab !== 'Services' && (
-                <div ref={dropdownRef} className="absolute top-[80px] right-0 w-[400px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-6 z-50 border border-neutral-200" onClick={(e) => e.stopPropagation()}>
+                <div ref={dropdownRef} className="absolute top-[66px] sm:top-[80px] left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 w-[calc(100vw-24px)] sm:w-[400px] max-w-[400px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-5 sm:p-6 z-50 border border-neutral-200" onClick={(e) => e.stopPropagation()}>
                   {[
                     { key: 'adults', title: 'Adults', desc: 'Ages 13 or above' },
                     { key: 'children', title: 'Children', desc: 'Ages 2–12' },
@@ -812,7 +839,7 @@ export default function Header() {
               )}
 
               {activeDropdown === 'who' && activeTab === 'Services' && (
-                <div ref={dropdownRef} className="absolute top-[80px] right-0 w-[500px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-6 z-50 border border-neutral-200" onClick={(e) => e.stopPropagation()}>
+                <div ref={dropdownRef} className="absolute top-[66px] sm:top-[80px] left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 w-[calc(100vw-24px)] sm:w-[500px] max-w-[500px] bg-white rounded-3xl shadow-[0_6px_20px_rgba(0,0,0,0.2)] p-4 sm:p-6 z-50 border border-neutral-200" onClick={(e) => e.stopPropagation()}>
                   <div className="flex flex-wrap gap-3 justify-center">
                     {[
                       { icon: '📸', name: 'Photography' },

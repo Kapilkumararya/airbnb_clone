@@ -36,6 +36,9 @@ export default function HostListingRow({ item, onDeleted }: { item: any; onDelet
           src={item.images?.[0]?.image_url || item.image_url || "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=80"} 
           alt={item.title} 
           className="w-24 h-20 object-cover rounded-xl border border-neutral-200 shrink-0"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=80";
+          }}
         />
         <div>
           <div className="flex items-center gap-2">
