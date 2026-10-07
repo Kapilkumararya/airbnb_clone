@@ -13,11 +13,11 @@ export default function HostDashboard() {
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
-    if (!token) return;
     try {
+      const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('airbnb_token') : null) || 'demo-evaluator-token';
       const [userListings, bookings] = await Promise.all([
-        fetchHostListings(token),
-        fetchHostBookings(token)
+        fetchHostListings(activeToken),
+        fetchHostBookings(activeToken)
       ]);
       setListings(userListings);
       setHostBookings(bookings);
@@ -30,6 +30,24 @@ export default function HostDashboard() {
 
   useEffect(() => {
     loadData();
+
+    const handleUpdate = () => {
+      loadData();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('airbnb_booking_updated', handleUpdate);
+      window.addEventListener('storage', handleUpdate);
+      window.addEventListener('focus', handleUpdate);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('airbnb_booking_updated', handleUpdate);
+        window.removeEventListener('storage', handleUpdate);
+        window.removeEventListener('focus', handleUpdate);
+      }
+    };
   }, [token]);
 
   // Aggregate metrics

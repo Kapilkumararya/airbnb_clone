@@ -79,9 +79,8 @@ function TripsContent() {
   };
 
   const loadBookings = async () => {
-    if (!token) return;
     try {
-      const data = await fetchMyBookings(token);
+      const data = await fetchMyBookings(token || undefined);
       setBookings(data);
     } catch { /* ignore */ }
     setLoading(false);
@@ -89,6 +88,16 @@ function TripsContent() {
 
   useEffect(() => {
     loadBookings();
+
+    const handleUpdate = () => {
+      loadBookings();
+    };
+    window.addEventListener('airbnb_booking_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('airbnb_booking_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, [token]);
 
   const handleCancel = async (bookingId: number) => {
@@ -114,6 +123,15 @@ function TripsContent() {
       </div>
     );
   }
+
+  // Sort bookings so upcoming stays are always at the top
+  const sortedBookings = [...bookings].sort((a: any, b: any) => {
+    const aUpcoming = a.status !== 'cancelled' && new Date(a.check_out) > new Date();
+    const bUpcoming = b.status !== 'cancelled' && new Date(b.check_out) > new Date();
+    if (aUpcoming && !bUpcoming) return -1;
+    if (!aUpcoming && bUpcoming) return 1;
+    return new Date(b.created_at || b.check_in).getTime() - new Date(a.created_at || a.check_in).getTime();
+  });
 
   return (
     <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-10 lg:px-12 py-10">
@@ -161,18 +179,19 @@ function TripsContent() {
         </div>
       )}
 
-      {bookings.length > 0 ? (
+      {sortedBookings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {bookings.map((booking: any) => {
+          {sortedBookings.map((booking: any) => {
             const checkInDate = new Date(booking.check_in).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             const checkOutDate = new Date(booking.check_out).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             const isCancelled = booking.status === 'cancelled';
+            const isUpcoming = !isCancelled && new Date(booking.check_out) > new Date();
 
             return (
               <div 
                 key={booking.id} 
                 className={`rounded-2xl border overflow-hidden shadow-sm hover:shadow-md transition bg-white flex flex-col ${
-                  isCancelled ? 'border-neutral-200 opacity-75' : 'border-neutral-200'
+                  isCancelled ? 'border-neutral-200 opacity-75' : isUpcoming ? 'border-emerald-300 ring-2 ring-emerald-500/20' : 'border-neutral-200'
                 }`}
               >
                 <div className="relative aspect-[16/10] bg-neutral-100">
@@ -181,13 +200,28 @@ function TripsContent() {
                     alt={booking.listing?.title || "Listing"}
                     className="w-full h-full object-cover"
                   />
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-sm ${
-                    isCancelled 
-                      ? 'bg-neutral-800 text-white' 
-                      : 'bg-white/95 backdrop-blur-sm text-emerald-700'
-                  }`}>
-                    {isCancelled ? 'Cancelled' : '✓ Confirmed'}
+                  {/* Status Badges */}
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                    {isUpcoming ? (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold shadow-md bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span>Upcoming</span>
+                      </span>
+                    ) : isCancelled ? (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold shadow-sm bg-neutral-800 text-white">
+                        Cancelled
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold shadow-sm bg-white/95 backdrop-blur-sm text-neutral-800">
+                        Past Stay
+                      </span>
+                    )}
                   </div>
+                  {isUpcoming && (
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-sm bg-white/95 backdrop-blur-sm text-emerald-800">
+                      ✓ Confirmed
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
