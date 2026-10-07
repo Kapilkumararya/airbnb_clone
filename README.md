@@ -264,43 +264,6 @@ npm run dev
 
 ---
 
-## 📦 Deployment Guide
-
-### Deploy Backend to Render
-
-1. Push your repository to **GitHub**.
-2. Log in to [Render Dashboard](https://dashboard.render.com/) and click **New + > Web Service**.
-3. Connect your GitHub repository.
-4. Configure the Web Service:
-   - **Name:** `airbnb-clone-backend`
-   - **Root Directory:** `backend`
-   - **Runtime:** `Python 3`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Under **Environment Variables**, add:
-   - `SECRET_KEY`: *(Any random 32-character string)*
-   - `PYTHON_VERSION`: `3.11.8`
-6. Click **Deploy Web Service**.
-7. *Note down your Render backend URL (e.g., `https://airbnb-clone-backend.onrender.com`).*
-   *(On first boot, the backend automatically seeds all 27 listings, demo users, and bookings via its lifespan handler).*
-
----
-
-### Deploy Frontend to Vercel
-
-1. Log in to [Vercel Dashboard](https://vercel.com/) and click **Add New... > Project**.
-2. Import your GitHub repository.
-3. In the project configuration:
-   - **Framework Preset:** `Next.js`
-   - **Root Directory:** Click "Edit" and select `frontend`.
-4. Under **Environment Variables**, add:
-   - **Key:** `NEXT_PUBLIC_API_URL`
-   - **Value:** `https://<your-render-backend-url>/api` *(e.g. `https://airbnb-clone-backend.onrender.com/api`)*
-5. Click **Deploy**.
-6. Your Vercel frontend is live!
-
----
-
 ## 💡 Assumptions Made
 
 1. **Mocked Payment:** Real card processing is out of scope per assignment instructions; mocked payment method selection (Credit Card / UPI / Instant) is provided in checkout.
