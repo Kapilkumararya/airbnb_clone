@@ -47,3 +47,10 @@ Thumbs.db
 .vscode/
 .idea/
 .vercel
+
+# AI agent instructions
+AGENTS.md
+CLAUDE.md
+frontend/AGENTS.md
+frontend/CLAUDE.md
+
