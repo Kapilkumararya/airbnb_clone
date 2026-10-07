@@ -8,9 +8,9 @@ Built with **Next.js (TypeScript)** on the frontend, **Python (FastAPI)** on the
 
 ## 🌐 Live Deployment & Submission Links
 
-- **Frontend (Vercel):** `[Your Vercel Deployment URL here]` *(e.g., https://airbnb-clone-frontend.vercel.app)*
-- **Backend (Render):** `[Your Render Deployment URL here]` *(e.g., https://airbnb-clone-backend.onrender.com)*
-- **GitHub Repository (Public):** `[Your GitHub Repository URL here]`
+- **Frontend (Vercel):** `https://airbnb-clone-piut28426-kapilarya.vercel.app/` 
+- **Backend (Render):** `https://airbnb-clone-bmvr.onrender.com`
+- **GitHub Repository (Public):** `https://github.com/Kapilkumararya/airbnb_clone`
 
 ---
 
